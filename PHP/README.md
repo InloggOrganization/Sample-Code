@@ -36,6 +36,7 @@ if ($info['response_code'] == 200) {
     }
     print("No token received from authentication. Exiting...\n");
     exit(1);
+}
 ```
 
 The token received in the above example is used in all future calls and passed as header parameters.
