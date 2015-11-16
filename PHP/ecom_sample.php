@@ -17,6 +17,7 @@ $BASE_URL = 'http://api.inlogg.com/v1';
 $AUTHENTICATE_PATH = '/authenticateUser';
 $CREATE_FORWARD_SHIPMENT_PATH = '/createForwardShipment';
 $SHIPMENT_STATUS_PATH = '/shipmentStatus';
+$RATE_CARD_PATH = '/getShipmentRate';
 
 /**
  * @param $url string The resource endpoint to be queried
@@ -140,6 +141,37 @@ switch($info['response_code']) {
         break;
     case 404:
         print("No matching records\n");
+        break;
+    default:
+        print($msg_body . "\n");
+        break;
+}
+
+
+# Get Shipment Rate - Rate card API
+print("Get shipment rate");
+$request_data = array(
+    array(
+        'dead_weight' => '500', //In grams
+        'payment_mode' => 'PP',
+        'src_pincode' => '600123',
+        'dest_pincode' => '500123'
+    )
+);
+$params = array('request_data' => json_encode($request_data));
+$response = http_post_fields($BASE_URL . $RATE_CARD_PATH, $params, null, array('headers' => $headers), $info);
+$msg_body = http_parse_message($response)->body;
+switch($info['response_code']) {
+    case 200: //success
+        print($msg_body . "\n");
+        $json_response = json_decode($msg_body);
+        $rate = $json_response[0]->rate;
+        break;
+    case 400:
+        print("Invalid format\n");
+        break;
+    case 412:
+        print("Pre condition failed or mandatory input missing\n");
         break;
     default:
         print($msg_body . "\n");
