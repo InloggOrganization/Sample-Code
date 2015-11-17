@@ -137,5 +137,5 @@ request_data = [
                 'payment_mode': 'COD',  # 'COD' or 'PP'
                 'local': 'yes'
             }] 
-p```
+```
 
