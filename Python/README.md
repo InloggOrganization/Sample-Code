@@ -91,3 +91,51 @@ else:
     else:
         print(response.text)
 ```
+
+## Accessing Rate Card
+To access the rate card, use the `getShipmentRate` method. 
+
+```python
+request_data = [
+            {
+                'dead_weight': '500',   # dead weight in grams
+                'payment_mode': 'COD',  # 'COD' or 'PP'
+                'src_pincode': '560068',
+                'dest_pincode': '560037'
+            }] 
+parameters = {
+        'request_data': json.dumps(request_data) 
+        }
+response = requests.get(BASE_URL + SHIPMENT_RATE_PATH, parameters, headers=headers)
+if response.ok:
+    rates = json.loads(response.text)
+    print(rates)
+else:
+    print(response.text)
+    if response.status_code == 401:
+        print("Authentication failure")
+    elif response.status_code == 412:
+        print("Insufficient parameters passed")
+    else:
+        print("Failure")
+
+```
+Instead of providing `src_pincode` and `dest_pincode`, the `request_data` could have one of the following:
+
+- `src_area` and `dest_area` fields
+- `local` field set to "yes"
+- `zonal` field set to "yes"
+- `regional` field set to "yes"
+- `national` field set to "yes"
+
+For example :
+
+```python
+request_data = [
+            {
+                'dead_weight': '500',   # dead weight in grams
+                'payment_mode': 'COD',  # 'COD' or 'PP'
+                'local': 'yes'
+            }] 
+p```
+

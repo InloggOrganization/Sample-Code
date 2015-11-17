@@ -21,6 +21,7 @@ BASE_URL = 'http://api.inlogg.com/v1'
 AUTHENTICATE_PATH = '/authenticateUser'
 GET_SHIPMENTS_PATH = '/getShipments'
 SHIPMENT_STATUS_PATH = '/shipmentStatus'
+SHIPMENT_RATE_PATH = '/getShipmentRate'
 
 # Authenticate user and get token
 print("Getting access token by authenticating ....")
@@ -117,3 +118,29 @@ else:
         print("Incorrect format or status not matching")
     else:
         print("Failure")
+
+# Accessing the Rate card
+print("Accessing rate card")
+request_data = [
+            {
+                'dead_weight': '500',   # dead weight in grams
+                'payment_mode': 'COD',  # 'COD' or 'PP'
+                'src_pincode': '560068',
+                'dest_pincode': '560037'
+            }] 
+parameters = {
+        'request_data': json.dumps(request_data) 
+        }
+response = requests.get(BASE_URL + SHIPMENT_RATE_PATH, parameters, headers=headers)
+if response.ok:
+    rates = json.loads(response.text)
+    print(rates)
+else:
+    print(response.text)
+    if response.status_code == 401:
+        print("Authentication failure")
+    elif response.status_code == 412:
+        print("Insufficient parameters passed")
+    else:
+        print("Failure")
+
