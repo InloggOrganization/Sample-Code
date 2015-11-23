@@ -157,7 +157,7 @@ $request_data = array(
     )
 );
 $params = array('request_data' => json_encode($request_data));
-$response = http_post_fields($BASE_URL . $SHIPMENT_STATUS_PATH, $params, null, array('headers' => $headers), $info);
+$response = http_get($BASE_URL . $SHIPMENT_STATUS_PATH, $params, null, array('headers' => $headers), $info);
 $msg_body = http_parse_message($response)->body;
 switch($info['response_code']) {
     case 200: //success
@@ -191,7 +191,7 @@ $request_data = array(
     )
 );
 $params = array('request_data' => json_encode($request_data));
-$response = http_post_fields($BASE_URL . $RATE_CARD_PATH, $params, null, array('headers' => $headers), $info);
+$response = http_get($BASE_URL . $RATE_CARD_PATH, $params, null, array('headers' => $headers), $info);
 $msg_body = http_parse_message($response)->body;
 switch($info['response_code']) {
     case 200: //success
