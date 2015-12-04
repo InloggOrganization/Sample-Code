@@ -134,6 +134,29 @@ namespace InLoggSampleCode
                     var content = await responseMessage.Content.ReadAsStringAsync();
                     Console.WriteLine("Unable to get shipments");
                     Console.WriteLine(content);
+                }
+                
+                // Update Shipment status
+                requestMessage = new HttpRequestMessage(HttpMethod.Post, BASE_URL + "/shipmentStatus");
+                requestMessage.Headers.Add("X-API-User-Token", token);
+                requestMessage.Headers.Add("X-API-User-ID", id);
+                
+                var shipmentDataArray = new List<ShipmentStatusBean>();
+                shipmentDataArray.Add(new ShipmentStatusBean(){tracking_id="GR11", shipment_status_text="forward_confirmed"});
+                var postParameters = new Dictionary<string, string>
+                    {
+                        { "shipment_data", Newtonsoft.Json.JsonConvert.SerializeObject(shipmentDataArray)},                               
+                    };
+                requestMessage.Content = new FormUrlEncodedContent(postParameters);
+                responseMessage = await client.SendAsync(requestMessage);
+                
+                if(responseMessage.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Updated status");
+                }
+                else 
+                {
+                    Console.WriteLine(await responseMessage.Content.ReadAsStringAsync());
                 }                                
             }
         }
