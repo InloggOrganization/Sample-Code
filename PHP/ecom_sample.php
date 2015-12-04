@@ -118,7 +118,7 @@ switch($info['response_code']) {
         print($msg_body . "\n");
 }
 
-# Updating shipment status
+# Post shipment status
 print("Updating shipment status");
 $shipment_data = array(
     array(
@@ -148,6 +148,38 @@ switch($info['response_code']) {
 }
 
 
+
+# Get Shipment Status
+print("Get shipment status");
+$request_data = array(
+    array(
+        'tracking_id' => '500123'
+    )
+);
+$params = array('request_data' => json_encode($request_data));
+$response = http_get($BASE_URL . $SHIPMENT_STATUS_PATH, $params, null, array('headers' => $headers), $info);
+$msg_body = http_parse_message($response)->body;
+switch($info['response_code']) {
+    case 200: //success
+        print($msg_body . "\n");
+        $json_response = json_decode($msg_body);
+        $current_status = $json_response[0]->current_status;
+        $previous_statuses = $json_response[0]->previous_statuses;
+        break;
+    case 400:
+        print("Invalid format\n");
+        break;
+    case 412:
+        print("Pre condition failed or mandatory input missing\n");
+        break;
+    case 404:
+        print("Tracking_id or order_id is not found");
+    default:
+        print($msg_body . "\n");
+        break;
+}
+
+
 # Get Shipment Rate - Rate card API
 print("Get shipment rate");
 $request_data = array(
@@ -159,7 +191,7 @@ $request_data = array(
     )
 );
 $params = array('request_data' => json_encode($request_data));
-$response = http_post_fields($BASE_URL . $RATE_CARD_PATH, $params, null, array('headers' => $headers), $info);
+$response = http_get($BASE_URL . $RATE_CARD_PATH, $params, null, array('headers' => $headers), $info);
 $msg_body = http_parse_message($response)->body;
 switch($info['response_code']) {
     case 200: //success
@@ -177,3 +209,4 @@ switch($info['response_code']) {
         print($msg_body . "\n");
         break;
 }
+
