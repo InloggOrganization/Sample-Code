@@ -27,6 +27,7 @@ class InLoggClient
     SHIPMENT_RATE_PATH = '/getShipmentRate'
     CREATE_FORWARD_SHIPMENT_PATH = '/createForwardShipment'
     SHIPMENT_STATUS_PATH = '/shipmentStatus'
+    SHIPMENT_STATUS_CHANGES_PATH = '/shipmentStatusChanges'
 
     public 
     def initialize(authKey, authUser, authPass, authType)
@@ -81,6 +82,15 @@ class InLoggClient
         response = RestClient.get "#{url}?#{queryString}", @headers
         return JSON.parse(response)
     end
+    
+    # Method to get changes to shipment status between startTime and endTime (both inclusive)
+    # Time has to be given as epoch time
+    def getShipmentStatusChanges(startTime, endTime)
+        url = "#{BASE_URL}/#{VERSION}#{SHIPMENT_STATUS_CHANGES_PATH}"
+        queryString = "start_time=#{startTime}&end_time=#{endTime}"
+        response = RestClient.get "#{url}?#{queryString}", @headers
+        return JSON.parse(response)
+    end
 end
 
 
@@ -126,3 +136,9 @@ trackingId = client.createShipment([{
 status = client.getShipmentStatus([{
     "tracking_id" => "123499"
 }])
+startTime = Time.new(2016, 1, 10, 0, 0, 0, "+05:30") # Date : 11/01/2016 00:00:00 IST
+endTime   = Time.new(2016, 1, 12, 0, 0, 0, "+05:30") # Date : 11/01/2016 00:00:00 IST
+changes = statusChanges = client.getShipmentStatusChanges(startTime.to_i, endTime.to_i)
+if changes['response_code'] = 'true'
+    puts changes['status_changes']
+end
